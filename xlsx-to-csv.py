@@ -12,7 +12,8 @@ def get_all_xslx_files(directory :str, extension :str):
       path_to_csv_file = os.path.join(get_csv_dir_path(directory), csv_file_name) 
       if not os.path.isfile(path_to_csv_file):
       # Ajouter le nom de fichier à la liste des fichiers ".xlsx"
-        list_files_name.append(file)
+        path_to_xlsx_file = os.path.join(get_xlsx_dir_path(directory), file)
+        list_files_name.append(path_to_xlsx_file)
   return list_files_name
 
 def get_all_csv_files(directory :str, extension :str):
@@ -33,7 +34,7 @@ def xlsx_to_csv(directory :str):
     read_file = pd.read_excel (file, sheet_name=0, skiprows=5)
     # Stocker le nom du futur fichier ".csv"
     csv_file = file.replace(".xlsx", ".csv")
-    path_to_csv_file = os.path.join(get_csv_dir_path(directory), csv_file)
+    path_to_csv_file = os.path.join(get_csv_dir_path(directory), os.path.basename(csv_file))
     csv_files_name.append(path_to_csv_file)
     # Le convertir en fichier ".csv"
     read_file.to_csv (path_to_csv_file, index = None, header=True, sep=';')
