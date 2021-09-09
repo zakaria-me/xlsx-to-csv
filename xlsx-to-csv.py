@@ -45,9 +45,11 @@ def csv_to_sql(csv_files_name :list, directory :str):
     path_to_sql_file = os.path.join(get_sql_dir_path(directory), sql_file_name_to_create)
     if not os.path.exists(path_to_sql_file):
       path_to_csv_file = os.path.join(get_csv_dir_path(directory), file)
-      fd = os.open(path_to_sql_file, os.O_WRONLY | os.O_CREAT)
+      #fd = open(path_to_sql_file, os.O_WRONLY | os.O_CREAT)
+      sql_file = open(path_to_sql_file, mode="a")
       print("Ecriture de " + sql_file_name_to_create + " en cours")
-      subprocess.run(["csvsql.exe", "-ipostgresql", "-eUTF-8", path_to_csv_file], stdout=fd)
+      subprocess.run(["csvsql.exe", "-ipostgresql", "-eUTF-8", path_to_csv_file], stdout=sql_file)
+      print("COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';')", file=sql_file) 
       print("Ecriture de " + sql_file_name_to_create + " terminée")
 
 def create_destination_directories(directory):
@@ -75,7 +77,9 @@ def main():
   directory = os.getcwd()
   # Créer les dossiers où seront stockés les fichiers .csv et .sql
   create_destination_directories(directory)
+  # Exporter les fichiers xlsx en csv
   xlsx_to_csv(directory)
+  # Extraire les requetes sql des fichiers csv
   csv_to_sql(get_all_csv_files(directory, ".csv"), directory)
 
 main()
