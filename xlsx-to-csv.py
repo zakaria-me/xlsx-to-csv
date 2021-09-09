@@ -31,13 +31,14 @@ def xlsx_to_csv(directory :str):
   csv_files_name = get_all_csv_files(directory, ".csv")
   for file in xlsx_files_name:
     # lire le fichier Excel
-    read_file = pd.read_excel (file, sheet_name=0, skiprows=5)
+    read_file = pd.read_excel (file, sheet_name=["QP", "IRIS_2020", "COM_2020", "EPCI_2020"], skiprows=5)
     # Stocker le nom du futur fichier ".csv"
-    csv_file = file.replace(".xlsx", ".csv")
-    path_to_csv_file = os.path.join(get_csv_dir_path(directory), os.path.basename(csv_file))
-    csv_files_name.append(path_to_csv_file)
     # Le convertir en fichier ".csv"
-    read_file.to_csv (path_to_csv_file, index = None, header=True, sep=';')
+    for sheet in read_file:
+      csv_file = file.replace(".xlsx", ".csv")
+      path_to_csv_file = os.path.join(get_csv_dir_path(directory), sheet + "_" + os.path.basename(csv_file))
+      csv_files_name.append(path_to_csv_file)
+      read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
   return csv_files_name
 
 def csv_to_sql(csv_files_name :list, directory :str):
