@@ -47,12 +47,30 @@ def csv_to_sql(csv_files_name :list, directory :str):
     path_to_sql_file = os.path.join(get_sql_dir_path(directory), sql_file_name_to_create)
     if not os.path.exists(path_to_sql_file):
       path_to_csv_file = os.path.join(get_csv_dir_path(directory), file)
-      #fd = open(path_to_sql_file, os.O_WRONLY | os.O_CREAT)
       sql_file = open(path_to_sql_file, mode="a")
       print("Ecriture de " + sql_file_name_to_create + " en cours")
       subprocess.run(["csvsql.exe", "-ipostgresql", "-eUTF-8", path_to_csv_file], stdout=sql_file)
-      print("COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';')", file=sql_file) 
+      sql_file.close()
+      edit_sql_file(path_to_sql_file)
       print("Ecriture de " + sql_file_name_to_create + " terminée")
+
+def edit_sql_file(path_to_sql_file :str):
+  replace_double_quotes(path_to_sql_file)
+  append_copy_statement_to_sql_file(path_to_sql_file)
+
+def replace_double_quotes(path_to_sql_file :str):
+  sql_file_read = open(path_to_sql_file, mode="r")
+  data = sql_file_read.read()
+  data = data.replace("\"", "")
+  sql_file_read.close()
+  sql_file_write = open(path_to_sql_file, mode="w")
+  sql_file_write.write(data)
+  sql_file_write.close()
+
+def append_copy_statement_to_sql_file(path_to_sql_file):
+  sql_file_append = open(path_to_sql_file, mode="a")
+  print("-- NE PAS DECOMMENTER \n --\COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8')", file=sql_file_append) 
+  sql_file_append.close()
 
 def create_destination_directories(directory):
   sql_directory = get_sql_dir_path(directory) 
