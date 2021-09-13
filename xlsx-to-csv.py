@@ -2,18 +2,39 @@ from posixpath import join
 import pandas as pd
 import os
 import subprocess
+import sys
+
+def process_file_bool(file_name :str):
+  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
+  if answer == "oui":
+    print(file_name + " sera process.")
+    return True 
+  else:
+    print(file_name + " ne sera pas process.")
+    return True
+
+def process_sheet(file_name :str):
+  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
+  if answer == "oui":
+    print(file_name + " sera process.")
+    return True 
+  else:
+    print(file_name + " ne sera pas process.")
+    return True
 
 def get_all_xslx_files(directory :str, extension :str):
   list_files_name = []
   for file in os.listdir(get_xlsx_dir_path(directory)):
-    if extension in file:
-      # Si le fichier ".csv" correspondant au ".xlsx" existe déjà, pas besoin de le rajouter
-      csv_file_name = file.replace(extension, ".csv")
-      path_to_csv_file = os.path.join(get_csv_dir_path(directory), csv_file_name) 
-      if not os.path.isfile(path_to_csv_file):
-      # Ajouter le nom de fichier à la liste des fichiers ".xlsx"
-        path_to_xlsx_file = os.path.join(get_xlsx_dir_path(directory), file)
-        list_files_name.append(path_to_xlsx_file)
+    if IS_INTERACTIVE and process_file_bool(file):
+      if extension in file:
+        # Si le fichier ".csv" correspondant au ".xlsx" existe déjà, pas besoin de le rajouter
+        # car la conversion xlsx prend relativement beaucoup de temps
+        csv_file_name = file.replace(extension, ".csv")
+        path_to_csv_file = os.path.join(get_csv_dir_path(directory), csv_file_name) 
+        if not os.path.isfile(path_to_csv_file):
+        # Ajouter le nom de fichier à la liste des fichiers ".xlsx"
+          path_to_xlsx_file = os.path.join(get_xlsx_dir_path(directory), file)
+          list_files_name.append(path_to_xlsx_file)
   return list_files_name
 
 def get_all_csv_files(directory :str, extension :str):
@@ -111,7 +132,20 @@ def get_xlsx_dir_path(directory):
   path = os.path.join(directory, "fichiers_xlsx")
   return path
 
+def is_interactive():
+  global IS_INTERACTIVE
+  message_interactif = "Voulez-vous lancer le programme en mode interactif ?\n" + "Par défaut le programme prendra en compte tous les fichiers .xlsx contenus dans 'fichiers_excel'. En outre, pour chaque fichier excel considéré, il ne convertira que la première feuille en .csv." + " De plus, il sautera par défaut les 5 premières lignes de la feuille afin de capturer directement les en-têtes avec le nom des variables.\n"  + "Taper oui pour OUI. Taper non pour NON: "
+  IS_INTERACTIVE = input(message_interactif)
+  if IS_INTERACTIVE == "oui":
+    IS_INTERACTIVE = True
+    print("--- Lancement du programme en mode interactif ---")
+  else: 
+    IS_INTERACTIVE = False
+    print("--- Lancement du programme en mode indépendant ---")
+
 def main():
+  # Ask for interactive or not ?
+  is_interactive()
   # Prendre en mémoire le chemin vers le répertoire courant
   directory = os.getcwd()
   # Créer les dossiers où seront stockés les fichiers .csv et .sql
