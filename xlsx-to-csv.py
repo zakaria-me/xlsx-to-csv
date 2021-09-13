@@ -38,12 +38,12 @@ def xlsx_to_csv(directory :str):
     # Si on veut commencer l'export a partir de la ligne 8 du fichier excel on ecrira:
     #    skiprows=7 
     ######################################################################################
-    read_file = pd.read_excel (file, sheet_name=["QP", "IRIS_2020", "COM_2020", "EPCI_2020"], skiprows=5)
+    read_file = pd.read_excel (file, sheet_name=[0, "IRIS_2020", "COM_2020", "EPCI_2020"], skiprows=5)
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     for sheet in read_file:
       csv_file = file.replace(".xlsx", ".csv")
-      path_to_csv_file = os.path.join(get_csv_dir_path(directory), sheet + "_" + os.path.basename(csv_file))
+      path_to_csv_file = os.path.join(get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)
       read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
   return csv_files_name
