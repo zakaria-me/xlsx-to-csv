@@ -14,13 +14,23 @@ def process_file_bool(file_name :str):
     return True
 
 def process_sheet(file_name :str):
-  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
-  if answer == "oui":
-    print(file_name + " sera process.")
-    return True 
-  else:
-    print(file_name + " ne sera pas process.")
-    return True
+  print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Entrez 'q' pour quitter: ")  
+  answer = []
+  for value in sys.stdin:
+    if 'q' == value.rstrip():
+      break
+    value = value.strip()
+    if value.isdigit():
+      value = int(value)
+    answer.append(value)
+  print(answer)
+  return answer
+
+def process_rows(file_name :str):
+  answer = input("A quelle ligne se trouve l'en-tête contenant les noms des colonnes dans " + file_name + " ? ")  
+  if answer.isdigit():
+    answer = int(answer) - 1
+    return answer
 
 def get_all_xslx_files(directory :str, extension :str):
   list_files_name = []
@@ -51,7 +61,6 @@ def xlsx_to_csv(directory :str):
   # Stocker tous les fichiers ".csv" du répertoire courant
   csv_files_name = get_all_csv_files(directory, ".csv")
   for file in xlsx_files_name:
-    # lire le fichier Excel 
     ######################################################################################
     # LES VALEURS A CHANGER SONT ICI
     # sheet_name : le nom de(s) ou le numero (la numerotation commence par zero) des feuille(s) excel a exporter pour le fichier excel considéré
@@ -59,7 +68,13 @@ def xlsx_to_csv(directory :str):
     # Si on veut commencer l'export a partir de la ligne 8 du fichier excel on ecrira:
     #    skiprows=7 
     ######################################################################################
-    read_file = pd.read_excel (file, sheet_name=[0, "IRIS_2020", "COM_2020", "EPCI_2020"], skiprows=5)
+    skiprows = 5 
+    sheet_name = 0 
+    if IS_INTERACTIVE:
+      sheet_name = process_sheet(os.path.basename(file))
+      skiprows = process_rows(os.path.basename(file))
+    # lire le fichier Excel 
+    read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     for sheet in read_file:
