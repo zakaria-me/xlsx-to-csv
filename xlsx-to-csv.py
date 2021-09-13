@@ -30,7 +30,14 @@ def xlsx_to_csv(directory :str):
   # Stocker tous les fichiers ".csv" du répertoire courant
   csv_files_name = get_all_csv_files(directory, ".csv")
   for file in xlsx_files_name:
-    # lire le fichier Excel
+    # lire le fichier Excel 
+    ######################################################################################
+    # LES VALEURS A CHANGER SONT ICI
+    # sheet_name : le nom de(s) ou le numero (la numerotation commence par zero) des feuille(s) excel a exporter pour le fichier excel considéré
+    # skiprows : le nombre de lignes a sauter lors de l'export de csv a sql. 
+    # Si on veut commencer l'export a partir de la ligne 8 du fichier excel on ecrira:
+    #    skiprows=7 
+    ######################################################################################
     read_file = pd.read_excel (file, sheet_name=["QP", "IRIS_2020", "COM_2020", "EPCI_2020"], skiprows=5)
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
