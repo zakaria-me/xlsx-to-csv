@@ -4,14 +4,54 @@ import os
 import subprocess
 import sys
 
-def process_file_bool(file_name :str):
-  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
-  if answer == "oui":
-    print(file_name + " sera process.")
-    return True 
-  else:
-    print(file_name + " ne sera pas process.")
-    return False 
+def append_copy_statement_to_sql_file(path_to_sql_file :str):
+  sql_file_append = open(path_to_sql_file, mode="a")
+  print("-- NE PAS DECOMMENTER \n -- \COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8')", file=sql_file_append) 
+  sql_file_append.close()
+
+def replace_double_quotes(path_to_sql_file :str):
+  sql_file_read = open(path_to_sql_file, mode="r")
+  data = sql_file_read.read()
+  data = data.replace("\"", "")
+  sql_file_read.close()
+  sql_file_write = open(path_to_sql_file, mode="w")
+  sql_file_write.write(data)
+  sql_file_write.close()
+
+def add_drop_statement_to_sql_file(path_to_sql_file :str):
+  sql_file_read = open(path_to_sql_file, mode="r")
+  data = sql_file_read.read()
+  # the + operator is not the most efficient, maybe try something else?
+  data = "DROP TABLE IF EXISTS 'nom_du_schema.nom_de_la_table'; \n" + data
+  sql_file_read.close()
+  sql_file_write = open(path_to_sql_file, mode="w")
+  sql_file_write.write(data)
+  sql_file_write.close()
+  pass
+
+def edit_sql_file(path_to_sql_file :str):
+  add_drop_statement_to_sql_file(path_to_sql_file)
+  replace_double_quotes(path_to_sql_file)
+  append_copy_statement_to_sql_file(path_to_sql_file)
+
+def csv_to_sql(csv_files_name :list, directory :str):
+  for file in csv_files_name:
+    sql_file_name_to_create = file.replace("csv", "sql")
+    path_to_sql_file = os.path.join(get_sql_dir_path(directory), sql_file_name_to_create)
+    if not os.path.exists(path_to_sql_file):
+      path_to_csv_file = os.path.join(get_csv_dir_path(directory), file)
+      sql_file = open(path_to_sql_file, mode="a")
+      print("Ecriture de " + sql_file_name_to_create + " en cours")
+      subprocess.run(["csvsql.exe", "-ipostgresql", "-eUTF-8", path_to_csv_file], stdout=sql_file)
+      sql_file.close()
+      edit_sql_file(path_to_sql_file)
+      print("Ecriture de " + sql_file_name_to_create + " terminée")
+
+def process_rows(file_name :str):
+  answer = input("A quelle ligne se trouve l'en-tête contenant les noms des colonnes dans " + file_name + " ? ")  
+  if answer.isdigit():
+    answer = int(answer) - 1
+    return answer
 
 def process_sheet(file_name :str):
   print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Entrez 'q' pour quitter: ")  
@@ -29,11 +69,26 @@ def process_sheet(file_name :str):
   print(answer)
   return answer
 
-def process_rows(file_name :str):
-  answer = input("A quelle ligne se trouve l'en-tête contenant les noms des colonnes dans " + file_name + " ? ")  
-  if answer.isdigit():
-    answer = int(answer) - 1
-    return answer
+def get_all_csv_files(directory :str, extension :str):
+  list_files_name = []
+  for file in os.listdir(get_csv_dir_path(directory)):
+    if extension in file:
+      # Ajouter le nom de fichier à la liste des fichiers ".csv"
+      list_files_name.append(file)
+  return list_files_name
+
+def get_xlsx_dir_path(directory):
+  path = os.path.join(directory, "fichiers_xlsx")
+  return path
+
+def process_file_bool(file_name :str):
+  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
+  if answer == "oui":
+    print(file_name + " sera process.")
+    return True 
+  else:
+    print(file_name + " ne sera pas process.")
+    return False 
 
 def get_all_xslx_files(directory :str, extension :str):
   list_files_name = []
@@ -50,14 +105,6 @@ def get_all_xslx_files(directory :str, extension :str):
           list_files_name.append(path_to_xlsx_file)
         else:
           print("Le fichier " + csv_file_name + " existe déjà!\nCe fichier sera donc ignoré et pas converti.\n")
-  return list_files_name
-
-def get_all_csv_files(directory :str, extension :str):
-  list_files_name = []
-  for file in os.listdir(get_csv_dir_path(directory)):
-    if extension in file:
-      # Ajouter le nom de fichier à la liste des fichiers ".csv"
-      list_files_name.append(file)
   return list_files_name
 
 def xlsx_to_csv(directory :str):
@@ -98,48 +145,13 @@ def xlsx_to_csv(directory :str):
         read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
   return csv_files_name
 
-def csv_to_sql(csv_files_name :list, directory :str):
-  for file in csv_files_name:
-    sql_file_name_to_create = file.replace("csv", "sql")
-    path_to_sql_file = os.path.join(get_sql_dir_path(directory), sql_file_name_to_create)
-    if not os.path.exists(path_to_sql_file):
-      path_to_csv_file = os.path.join(get_csv_dir_path(directory), file)
-      sql_file = open(path_to_sql_file, mode="a")
-      print("Ecriture de " + sql_file_name_to_create + " en cours")
-      subprocess.run(["csvsql.exe", "-ipostgresql", "-eUTF-8", path_to_csv_file], stdout=sql_file)
-      sql_file.close()
-      edit_sql_file(path_to_sql_file)
-      print("Ecriture de " + sql_file_name_to_create + " terminée")
+def get_csv_dir_path(directory):
+  path = os.path.join(directory, "fichiers_csv")
+  return path
 
-def edit_sql_file(path_to_sql_file :str):
-  add_drop_statement_to_sql_file(path_to_sql_file)
-  replace_double_quotes(path_to_sql_file)
-  append_copy_statement_to_sql_file(path_to_sql_file)
-
-def replace_double_quotes(path_to_sql_file :str):
-  sql_file_read = open(path_to_sql_file, mode="r")
-  data = sql_file_read.read()
-  data = data.replace("\"", "")
-  sql_file_read.close()
-  sql_file_write = open(path_to_sql_file, mode="w")
-  sql_file_write.write(data)
-  sql_file_write.close()
-
-def append_copy_statement_to_sql_file(path_to_sql_file :str):
-  sql_file_append = open(path_to_sql_file, mode="a")
-  print("-- NE PAS DECOMMENTER \n -- \COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8')", file=sql_file_append) 
-  sql_file_append.close()
-
-def add_drop_statement_to_sql_file(path_to_sql_file :str):
-  sql_file_read = open(path_to_sql_file, mode="r")
-  data = sql_file_read.read()
-  # the + operator is not the most efficient, maybe try something else?
-  data = "DROP TABLE IF EXISTS 'nom_du_schema.nom_de_la_table'; \n" + data
-  sql_file_read.close()
-  sql_file_write = open(path_to_sql_file, mode="w")
-  sql_file_write.write(data)
-  sql_file_write.close()
-  pass
+def get_sql_dir_path(directory):
+  path = os.path.join(directory, "fichiers_sql")
+  return path
 
 def create_destination_directories(directory):
   sql_directory = get_sql_dir_path(directory) 
@@ -149,17 +161,27 @@ def create_destination_directories(directory):
   if not os.path.exists(csv_directory):
     os.mkdir(csv_directory) 
 
-def get_csv_dir_path(directory):
-  path = os.path.join(directory, "fichiers_csv")
-  return path
 
-def get_sql_dir_path(directory):
-  path = os.path.join(directory, "fichiers_sql")
-  return path
+def set_default_settings():
+  skiprows = input("Entrez la valeur de la ligne où se trouve l'en-tête des colonnes de vos fichiers excel: ")
+  if not skiprows.isdigit():
+    print("Entrez une valeur numérique! Le programme s'achève.\n")
+    exit()
+  else:
+    SKIPROWS_DEFAULT = skiprows -1
+  pass
 
-def get_xlsx_dir_path(directory):
-  path = os.path.join(directory, "fichiers_xlsx")
-  return path
+  sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
+  if sheet_name.isdigit():
+    SHEET_NAME = int(sheet_name)
+  else:
+    SHEET_NAME = sheet_name
+
+def default_settings():
+  message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 6)?\nTaper oui pour OUI. Taper non pour NON: "
+  answer = input(message_default)
+  if answer == "oui":
+    set_default_settings()
 
 def is_interactive():
   global IS_INTERACTIVE
@@ -176,27 +198,6 @@ def is_interactive():
     IS_INTERACTIVE = False
     print("--- Lancement du programme en mode indépendant ---")
     default_settings()
-
-def default_settings():
-  message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 6)?\nTaper oui pour OUI. Taper non pour NON: "
-  answer = input(message_default)
-  if answer == "oui":
-    set_default_settings()
-
-def set_default_settings():
-  skiprows = input("Entrez la valeur de la ligne où se trouve l'en-tête des colonnes de vos fichiers excel: ")
-  if not skiprows.isdigit():
-    print("Entrez une valeur numérique! Le programme s'achève.\n")
-    exit()
-  else:
-    SKIPROWS_DEFAULT = skiprows -1
-  pass
-
-  sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
-  if sheet_name.isdigit():
-    SHEET_NAME = int(sheet_name)
-  else:
-    SHEET_NAME = sheet_name
 
 def main():
   # Ask for interactive or not ?
