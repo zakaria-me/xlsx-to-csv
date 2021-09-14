@@ -11,7 +11,7 @@ def process_file_bool(file_name :str):
     return True 
   else:
     print(file_name + " ne sera pas process.")
-    return True
+    return False 
 
 def process_sheet(file_name :str):
   print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Entrez 'q' pour quitter: ")  
@@ -19,6 +19,9 @@ def process_sheet(file_name :str):
   for value in sys.stdin:
     if 'q' == value.rstrip():
       break
+    if value == "\n" and len(answer) == 0:
+      print("Vous n'avez pas entré de valeur, la valeur de la feuille à traiter sera: " + str(SHEET_NAME))
+      return SHEET_NAME
     value = value.strip()
     if value.isdigit():
       value = int(value)
@@ -35,7 +38,7 @@ def process_rows(file_name :str):
 def get_all_xslx_files(directory :str, extension :str):
   list_files_name = []
   for file in os.listdir(get_xlsx_dir_path(directory)):
-    if IS_INTERACTIVE and process_file_bool(file):
+    if IS_INTERACTIVE and process_file_bool(file) or IS_INTERACTIVE == False:
       if extension in file:
         # Si le fichier ".csv" correspondant au ".xlsx" existe déjà, pas besoin de le rajouter
         # car la conversion xlsx prend relativement beaucoup de temps
@@ -45,6 +48,8 @@ def get_all_xslx_files(directory :str, extension :str):
         # Ajouter le nom de fichier à la liste des fichiers ".xlsx"
           path_to_xlsx_file = os.path.join(get_xlsx_dir_path(directory), file)
           list_files_name.append(path_to_xlsx_file)
+        else:
+          print("Le fichier " + csv_file_name + " existe déjà!\nCe fichier sera donc ignoré et pas converti.\n")
   return list_files_name
 
 def get_all_csv_files(directory :str, extension :str):
@@ -68,20 +73,29 @@ def xlsx_to_csv(directory :str):
     # Si on veut commencer l'export a partir de la ligne 8 du fichier excel on ecrira:
     #    skiprows=7 
     ######################################################################################
-    skiprows = 5 
-    sheet_name = 0 
+    skiprows = SKIPROWS_DEFAULT 
+    sheet_name = SHEET_NAME 
     if IS_INTERACTIVE:
       sheet_name = process_sheet(os.path.basename(file))
       skiprows = process_rows(os.path.basename(file))
     # lire le fichier Excel 
+    print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter... Bip bip bop!")
     read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
+    print("Conversion de " + os.path.basename(file) + " terminée. Blop bip...")
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
-    for sheet in read_file:
+    if IS_INTERACTIVE == False or type(sheet_name) is not list:
       csv_file = file.replace(".xlsx", ".csv")
-      path_to_csv_file = os.path.join(get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
+      path_to_csv_file = os.path.join(get_csv_dir_path(directory), os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)
-      read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
+      read_file.to_csv(path_to_csv_file, index = None, header=True, sep=';')
+      pass
+    else:
+      for sheet in read_file:
+        csv_file = file.replace(".xlsx", ".csv")
+        path_to_csv_file = os.path.join(get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
+        csv_files_name.append(path_to_csv_file)
+        read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
   return csv_files_name
 
 def csv_to_sql(csv_files_name :list, directory :str):
@@ -149,6 +163,10 @@ def get_xlsx_dir_path(directory):
 
 def is_interactive():
   global IS_INTERACTIVE
+  global SKIPROWS_DEFAULT
+  global SHEET_NAME
+  SHEET_NAME = 0
+  SKIPROWS_DEFAULT = 5
   message_interactif = "Voulez-vous lancer le programme en mode interactif ?\n" + "Par défaut le programme prendra en compte tous les fichiers .xlsx contenus dans 'fichiers_excel'. En outre, pour chaque fichier excel considéré, il ne convertira que la première feuille en .csv." + " De plus, il sautera par défaut les 5 premières lignes de la feuille afin de capturer directement les en-têtes avec le nom des variables.\n"  + "Taper oui pour OUI. Taper non pour NON: "
   IS_INTERACTIVE = input(message_interactif)
   if IS_INTERACTIVE == "oui":
@@ -157,6 +175,28 @@ def is_interactive():
   else: 
     IS_INTERACTIVE = False
     print("--- Lancement du programme en mode indépendant ---")
+    default_settings()
+
+def default_settings():
+  message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 6)?\nTaper oui pour OUI. Taper non pour NON: "
+  answer = input(message_default)
+  if answer == "oui":
+    set_default_settings()
+
+def set_default_settings():
+  skiprows = input("Entrez la valeur de la ligne où se trouve l'en-tête des colonnes de vos fichiers excel: ")
+  if not skiprows.isdigit():
+    print("Entrez une valeur numérique! Le programme s'achève.\n")
+    exit()
+  else:
+    SKIPROWS_DEFAULT = skiprows -1
+  pass
+
+  sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
+  if sheet_name.isdigit():
+    SHEET_NAME = int(sheet_name)
+  else:
+    SHEET_NAME = sheet_name
 
 def main():
   # Ask for interactive or not ?
