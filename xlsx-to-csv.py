@@ -6,7 +6,7 @@ import sys
 
 def append_copy_statement_to_sql_file(path_to_sql_file :str):
   sql_file_append = open(path_to_sql_file, mode="a")
-  print("-- NE PAS DECOMMENTER \n -- \COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8')", file=sql_file_append) 
+  print("COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8');", file=sql_file_append) 
   sql_file_append.close()
 
 def replace_double_quotes(path_to_sql_file :str):
@@ -85,10 +85,10 @@ def get_xlsx_dir_path(directory):
 def process_file_bool(file_name :str):
   answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
   if answer == "oui":
-    print(file_name + " sera process.")
+    print(file_name + " sera process.\n")
     return True 
   else:
-    print(file_name + " ne sera pas process.")
+    print(file_name + " ne sera pas process.\n")
     return False 
 
 def get_all_xslx_files(directory :str, extension :str):
@@ -194,10 +194,10 @@ def is_interactive():
   IS_INTERACTIVE = input(message_interactif)
   if IS_INTERACTIVE == "oui":
     IS_INTERACTIVE = True
-    print("--- Lancement du programme en mode interactif ---")
+    print("--- Lancement du programme en mode interactif ---\n")
   else: 
     IS_INTERACTIVE = False
-    print("--- Lancement du programme en mode indépendant ---")
+    print("--- Lancement du programme en mode indépendant ---\n")
     default_settings()
 
 def main():
@@ -211,5 +211,6 @@ def main():
   xlsx_to_csv(directory)
   # Extraire les requetes sql des fichiers csv
   csv_to_sql(get_all_csv_files(directory, ".csv"), directory)
+  input("L'éxecution est terminée.Appuyer sur Entrée pour quitter le programme...")
 
 main()
