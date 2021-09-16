@@ -65,7 +65,8 @@ def process_sheet(file_name :str):
     value = value.strip()
     if value.isdigit():
       value = int(value)
-    answer.append(value)
+    if value != "":
+      answer.append(value)
   print(answer)
   return answer
 
