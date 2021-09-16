@@ -1,5 +1,6 @@
 
 import CONSTANT
+import xlsx_to_csv.xlsx_to_csv as xlsx_to_csv
 
 def set_default_settings():
   skiprows = input("Entrez la valeur de la ligne où se trouve l'en-tête des colonnes de vos fichiers excel: ")
@@ -10,11 +11,12 @@ def set_default_settings():
     CONSTANT.SKIPROWS_DEFAULT = int(skiprows) -1
   pass
 
-  sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
-  if sheet_name.isdigit():
-    CONSTANT.SHEET_NAME = int(sheet_name)
-  else:
-    CONSTANT.SHEET_NAME = sheet_name
+  CONSTANT.SHEET_NAME = xlsx_to_csv.process_sheet("vos fichiers excel")
+ # sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
+ # if sheet_name.isdigit():
+ #   CONSTANT.SHEET_NAME = int(sheet_name)
+ # else:
+ #   CONSTANT.SHEET_NAME = sheet_name
 
 def default_settings():
   message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 6)?\nTaper oui pour OUI. Taper non pour NON: "

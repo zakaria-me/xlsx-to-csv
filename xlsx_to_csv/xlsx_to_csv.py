@@ -87,7 +87,7 @@ def xlsx_to_csv(directory :str):
     print("Conversion de " + os.path.basename(file) + " terminée. Blop bip...")
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
-    if CONSTANT.IS_INTERACTIVE == False or type(sheet_name) is not list:
+    if type(sheet_name) is not list:
       csv_file = file.replace(".xlsx", ".csv")
       path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet_name) + "_" + os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)

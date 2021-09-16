@@ -16,6 +16,6 @@ def main():
   # Extraire les requetes sql des fichiers csv
   csv_to_sql.csv_to_sql(xlsx_to_csv.get_all_csv_files(directory, ".csv"), directory)
   # Pour éviter que l'invite de commande se referme directement aprés la fin du script
-  input("L'éxecution est terminée.Appuyer sur Entrée pour quitter le programme...")
+  input("L'exécution est terminée. Appuyer sur Entrée pour quitter le programme...")
 
 main()

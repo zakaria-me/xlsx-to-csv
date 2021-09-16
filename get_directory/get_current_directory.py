@@ -14,7 +14,7 @@ def input_dir_not_valid(directory):
     return 2
 
 def get_current_directory():
-  message = "Quel est le chemin amenant au répertoire d'où vous lancez le programme ? "
+  message = "Quel est le chemin amenant au répertoire où se trouve 'fichiers_xls' ? "
   directory = input(message)
   validity_of_dir_name = input_dir_not_valid(directory)
   while validity_of_dir_name > 0:
