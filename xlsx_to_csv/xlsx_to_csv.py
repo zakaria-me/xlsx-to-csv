@@ -89,7 +89,7 @@ def xlsx_to_csv(directory :str):
     # Le convertir en fichier ".csv"
     if CONSTANT.IS_INTERACTIVE == False or type(sheet_name) is not list:
       csv_file = file.replace(".xlsx", ".csv")
-      path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), os.path.basename(csv_file))
+      path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet_name) + "_" + os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)
       read_file.to_csv(path_to_csv_file, index = None, header=True, sep=';')
       pass

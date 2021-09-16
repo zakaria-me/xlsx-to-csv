@@ -7,7 +7,7 @@ def set_default_settings():
     print("Entrez une valeur numérique! Le programme s'achève.\n")
     exit()
   else:
-    CONSTANT.SKIPROWS_DEFAULT = skiprows -1
+    CONSTANT.SKIPROWS_DEFAULT = int(skiprows) -1
   pass
 
   sheet_name = input("Entrez le nom ou le numéro de la feuille du fichier excel a process pour tous les fichiers dans 'fichiers_xlsx': ")
@@ -27,8 +27,8 @@ def is_interactive():
   CONSTANT.IS_INTERACTIVE = input(message_interactif)
   if CONSTANT.IS_INTERACTIVE == "oui":
     CONSTANT.IS_INTERACTIVE = True
-    print("--- Lancement du programme en mode interactif ---\n")
+    print("\n--- Lancement du programme en mode interactif ---\n")
   else: 
     CONSTANT.IS_INTERACTIVE = False
-    print("--- Lancement du programme en mode indépendant ---\n")
+    print("\n--- Lancement du programme en mode indépendant ---\n")
     default_settings()
