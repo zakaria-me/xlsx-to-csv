@@ -50,6 +50,12 @@ def get_all_xslx_files(directory :str, extension :str):
   list_files_name = []
   for file in os.listdir(dest_dir.get_xlsx_dir_path(directory)):
     if CONSTANT.IS_INTERACTIVE and process_file_bool(file) or CONSTANT.IS_INTERACTIVE == False:
+      if ".xls" in file and ".xlsx" not in file: 
+        new_filename = file.replace(".xls", ".xlsx") 
+        current_path = os.path.join(dest_dir.get_xlsx_dir_path(directory), file)
+        new_path = os.path.join(dest_dir.get_xlsx_dir_path(directory), new_filename)
+        os.rename(current_path, new_path)
+        file = new_filename
       if extension in file:
         # Si le fichier ".csv" correspondant au ".xlsx" existe déjà, pas besoin de le rajouter
         # car la conversion xlsx prend relativement beaucoup de temps
