@@ -2,6 +2,16 @@ import os
 import subprocess
 import get_directory.destination_directories as dest_dir
 
+def append_update_geography_statement_to_file(path_to_sql_file: str):
+  sql_file_append = open(path_to_sql_file, mode="a")
+  print("""
+ALTER TABLE 
+	'nom_du_schema.nom_de_la_table'
+
+RENAME 'nom de la colonne LIBGEO' TO LIBGEO_XXXX; --- Remplacer XXXX par l'annee de la geographie
+""", file=sql_file_append) 
+  sql_file_append.close()
+
 def append_copy_statement_to_sql_file(path_to_sql_file :str):
   sql_file_append = open(path_to_sql_file, mode="a")
   print("COPY 'nom_du_schema.nom_de_la_table' FROM 'chemin_d_acces_au_fichier_csv' WITH(FORMAT CSV, HEADER True, DELIMITER ';', ENCODING 'UTF-8');", file=sql_file_append) 
@@ -31,6 +41,7 @@ def edit_sql_file(path_to_sql_file :str):
   add_drop_statement_to_sql_file(path_to_sql_file)
   replace_double_quotes(path_to_sql_file)
   append_copy_statement_to_sql_file(path_to_sql_file)
+  append_update_geography_statement_to_file(path_to_sql_file)
 
 def csv_to_sql(csv_files_name :list, directory :str):
   for file in csv_files_name:

@@ -38,12 +38,12 @@ def get_all_csv_files(directory :str, extension :str):
 
 
 def process_file_bool(file_name :str):
-  answer = input("Voulez-vous process : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
+  answer = input("Voulez-vous convertir : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
   if answer == "oui":
-    print(file_name + " sera process.\n")
+    print(file_name + " sera converti.\n")
     return True 
   else:
-    print(file_name + " ne sera pas process.\n")
+    print(file_name + " ne sera pas converti.\n")
     return False 
 
 def get_all_xslx_files(directory :str, extension :str):
@@ -88,9 +88,9 @@ def xlsx_to_csv(directory :str):
       sheet_name = process_sheet(os.path.basename(file))
       skiprows = process_rows(os.path.basename(file))
     # lire le fichier Excel 
-    print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter... Bip bip bop!")
+    print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter...")
     read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
-    print("Conversion de " + os.path.basename(file) + " terminée. Blop bip...")
+    print("Conversion de " + os.path.basename(file) + " terminée.")
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     if type(sheet_name) is not list:
