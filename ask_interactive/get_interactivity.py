@@ -19,13 +19,13 @@ def set_default_settings():
  #   CONSTANT.SHEET_NAME = sheet_name
 
 def default_settings():
-  message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 6)?\nTaper oui pour OUI. Taper non pour NON: "
+  message_default = "Voulez-vous modifier les valeurs par défaut de la feuille du fichier excel a process pour TOUS les fichiers dans 'fichier_xlsx' (par défaut cette valeur vaut 0) et la position de la ligne à partir de laquelle le process commencera (par défaut cette valeur vaut 1)?\nTaper oui pour OUI. Taper non pour NON: "
   answer = input(message_default)
   if answer == "oui":
     set_default_settings()
 
 def is_interactive():
-  message_interactif = "Voulez-vous lancer le programme en mode interactif ?\n" + "Par défaut le programme prendra en compte tous les fichiers .xlsx contenus dans 'fichiers_excel'. En outre, pour chaque fichier excel considéré, il ne convertira que la première feuille en .csv." + " De plus, il sautera par défaut les 5 premières lignes de la feuille afin de capturer directement les en-têtes avec le nom des variables.\n"  + "Taper oui pour OUI. Taper non pour NON: "
+  message_interactif = "Voulez-vous lancer le programme en mode interactif ?\n" + "Par défaut le programme prendra en compte tous les fichiers .xlsx contenus dans 'fichiers_excel'. En outre, pour chaque fichier excel considéré, il convertira TOUTES les feuilles en .csv." + " De plus, il capturera directement les en-têtes avec le nom des variables en première ligne.\n"  + "Taper oui pour OUI. Taper non pour NON: "
   CONSTANT.IS_INTERACTIVE = input(message_interactif)
   if CONSTANT.IS_INTERACTIVE == "oui":
     CONSTANT.IS_INTERACTIVE = True
