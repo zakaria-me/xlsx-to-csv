@@ -11,7 +11,7 @@ cd xlsx-to-csv/
 python3 xlsx-to-csv.py
 ```
 Place all your `xlsx` or `xls` files inside a directory named `fichiers_excel`. The program will read source files from this directory.
-During conversion, it will created `fichiers_csv` and `fichiers_sql` which respectively hold `csv` and `sql` files.
+During conversion, it will create `fichiers_csv` and `fichiers_sql` which respectively hold `csv` and `sql` files.
 
 Then follow everything that is prompted on your screen given that you are a French speaking fella'.
 
