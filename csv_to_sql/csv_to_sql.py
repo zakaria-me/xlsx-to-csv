@@ -4,13 +4,23 @@ import get_directory.destination_directories as dest_dir
 import csv_to_sql.fill_sql_query as fill_sql_query
 import csv, ast
 
+def append_update_code_geography_statement_to_file(path_to_sql_file: str):
+  sql_file_append = open(path_to_sql_file, mode="a")
+  print("""
+ALTER TABLE 
+	'nom_du_schema.nom_de_la_table'
+
+RENAME CODGEO TO CODGEO_XXXX; 
+""", file=sql_file_append) 
+  sql_file_append.close()
+
 def append_update_geography_statement_to_file(path_to_sql_file: str):
   sql_file_append = open(path_to_sql_file, mode="a")
   print("""
 ALTER TABLE 
 	'nom_du_schema.nom_de_la_table'
 
-RENAME 'nom de la colonne LIBGEO' TO LIBGEO_XXXX; --- Remplacer XXXX par l'annee de la geographie
+RENAME LIBGEO TO LIBGEO_XXXX; 
 """, file=sql_file_append) 
   sql_file_append.close()
 
@@ -44,6 +54,7 @@ def edit_sql_file(path_to_sql_file :str, filename :str, path_to_csv_file :str):
   replace_double_quotes(path_to_sql_file)
   append_copy_statement_to_sql_file(path_to_sql_file)
   append_update_geography_statement_to_file(path_to_sql_file)
+  append_update_code_geography_statement_to_file(path_to_sql_file)
   # get nom du schema
   nom_du_schema = fill_sql_query.get_nom_du_schema(filename)
   # get nom de la table
@@ -53,6 +64,7 @@ def edit_sql_file(path_to_sql_file :str, filename :str, path_to_csv_file :str):
   data = sql_file_read.read()
   data = data.replace("'nom_du_schema.nom_de_la_table'", nom_du_schema + "." + nom_de_la_table) 
   data = data.replace("chemin_d_acces_au_fichier_csv", path_to_csv_file) 
+  data = data.replace("XXXX", fill_sql_query.get_year(filename)) 
   sql_file_read.close()
   sql_file_write = open(path_to_sql_file, mode="w")
   sql_file_write.write(data)
