@@ -1,5 +1,7 @@
 import os
+from textwrap import fill
 import get_directory.destination_directories as dest_dir
+import csv_to_sql.fill_sql_query as fill_sql_query
 import csv, ast
 
 def append_update_geography_statement_to_file(path_to_sql_file: str):
@@ -37,14 +39,27 @@ def add_drop_statement_to_sql_file(path_to_sql_file :str):
   sql_file_write.close()
   pass
 
-def edit_sql_file(path_to_sql_file :str):
+def edit_sql_file(path_to_sql_file :str, filename :str, path_to_csv_file :str):
   add_drop_statement_to_sql_file(path_to_sql_file)
   replace_double_quotes(path_to_sql_file)
   append_copy_statement_to_sql_file(path_to_sql_file)
   append_update_geography_statement_to_file(path_to_sql_file)
+  # get nom du schema
+  nom_du_schema = fill_sql_query.get_nom_du_schema(filename)
+  # get nom de la table
+  nom_de_la_table = fill_sql_query.get_nom_de_la_table(filename)
+  # replace
+  sql_file_read = open(path_to_sql_file, mode="r")
+  data = sql_file_read.read()
+  data = data.replace("'nom_du_schema.nom_de_la_table'", nom_du_schema + "." + nom_de_la_table) 
+  data = data.replace("chemin_d_acces_au_fichier_csv", path_to_csv_file) 
+  sql_file_read.close()
+  sql_file_write = open(path_to_sql_file, mode="w")
+  sql_file_write.write(data)
+  sql_file_write.close()
 
 def write_sql_file(headers, type_list, sql_file_name_to_create, sql_file):
-  statement = '\nCREATE TABLE ' + sql_file_name_to_create.strip('.sql') + ' ('
+  statement = "\nCREATE TABLE 'nom_du_schema.nom_de_la_table' ("
   for i in range(len(headers)):
     statement = (statement + '\n\t' + '{} {}' + ',').format(headers[i], type_list[i])
   statement = statement[:-1] + '\n);\n'
@@ -98,5 +113,5 @@ def csv_to_sql(csv_files_name :list, directory :str):
       print("Ecriture de " + sql_file_name_to_create + " en cours")
       analyze_csv(path_to_csv_file, sql_file_name_to_create, sql_file)
       sql_file.close()
-      edit_sql_file(path_to_sql_file)
+      edit_sql_file(path_to_sql_file, sql_file_name_to_create, path_to_csv_file)
       print("Ecriture de " + sql_file_name_to_create + " terminée")
