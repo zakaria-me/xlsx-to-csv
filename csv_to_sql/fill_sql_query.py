@@ -8,8 +8,8 @@ def dec_or_disp(filename):
 def get_echelle_admin(filename):
     if filename.find("ARR") != -1:
         return "ARR"
-    if filename.find("DEPT") != -1:
-        return "DEPT"
+    if filename.find("DEP") != -1:
+        return "DEP"
     if filename.find("EPCI") != -1:
         return "EPCI"
     if filename.find("METROPOLE") != -1:
