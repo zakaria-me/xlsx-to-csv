@@ -4,6 +4,8 @@ def dec_or_disp(filename):
         return "DEC"
     if filename.find("DISP") != -1:
         return "DISP"
+    else:
+        return "NONE"
 
 def get_echelle_admin(filename):
     if filename.find("ARR") != -1:
@@ -18,6 +20,8 @@ def get_echelle_admin(filename):
         return "REG"
     if filename.find("COM") != -1:
         return "COM"
+    else:
+        return "NONE"
 
 def get_pauvres(filename):
      return "Pauvres" if filename.find("Pauvres") != -1 else ""
