@@ -104,7 +104,7 @@ def xlsx_to_csv(directory :str):
         csv_file = file.replace(".xlsx", ".csv")
         path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
         csv_files_name.append(path_to_csv_file)
-        print("Conversion de " + sheet + " en cours. Veuillez patienter...")
+        print("Conversion de " + str(sheet) + " en cours. Veuillez patienter...")
         read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
-        print("Conversion de " + sheet + " terminée.")
+        print("Conversion de " + str(sheet) + " terminée.")
   return csv_files_name
