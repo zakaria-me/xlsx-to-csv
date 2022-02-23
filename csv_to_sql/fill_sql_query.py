@@ -1,5 +1,10 @@
 import re
 def dec_or_disp(filename):
+    if filename.find("TRDEC") != -1 or filename.find("OPRDEC") != -1: # or else DEC gets captured in TRDEC or OPRDEC
+        if filename.find("DISP") != -1:
+            return "DISP"
+        else:
+            return "DEC"
     if filename.find("DEC") != -1:
         return "DEC"
     if filename.find("DISP") != -1:
