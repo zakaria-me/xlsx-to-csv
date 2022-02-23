@@ -64,7 +64,7 @@ def edit_sql_file(path_to_sql_file :str, filename :str, path_to_csv_file :str):
   data = sql_file_read.read()
   data = data.replace("'nom_du_schema.nom_de_la_table'", nom_du_schema + "." + nom_de_la_table) 
   data = data.replace("chemin_d_acces_au_fichier_csv", path_to_csv_file) 
-  data = data.replace("XXXX", fill_sql_query.get_year(filename)) 
+  data = data.replace("XXXX", fill_sql_query.get_geo_year_filosofi(fill_sql_query.get_year(filename))) 
   sql_file_read.close()
   sql_file_write = open(path_to_sql_file, mode="w")
   sql_file_write.write(data)

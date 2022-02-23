@@ -36,6 +36,11 @@ def get_year(filename):
     year_pattern = re.compile(r'.*(\d\d\d\d).*')
     return year_pattern.split(filename)[1]
 
+# in FILOSOFI, from 2012 to 2015 geo_year = data_year + 1
+def get_geo_year_filosofi(year):
+    year_int = int(year) + 1
+    return str(year_int)
+
 def get_nom_du_schema(filename):
     return "filosofi_" + get_year(filename)
 
