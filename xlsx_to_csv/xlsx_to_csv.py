@@ -12,13 +12,13 @@ def process_rows(file_name :str):
     return answer
 
 def process_sheet(file_name :str):
-  print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Entrez 'q' pour quitter: ")  
+  print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Appuyer sur seulement sur Entrée si vous voulez convertir toutes les feuilles. Entrez 'q' pour quitter: ")  
   answer = []
   for value in sys.stdin:
     if 'q' == value.rstrip():
       break
     if value == "\n" and len(answer) == 0:
-      print("Vous n'avez pas entré de valeur, la valeur de la feuille à traiter sera: " + str(CONSTANT.SHEET_NAME))
+      print("Vous n'avez pas entré de valeur, toutes les feuilles seront converties.")
       return CONSTANT.SHEET_NAME
     value = value.strip()
     if value.isdigit():
