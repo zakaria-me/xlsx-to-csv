@@ -46,7 +46,7 @@ def get_nom_du_schema(filename):
 
 def get_nom_de_la_table(filename):
     table_name = dec_or_disp(filename) + "_" + get_echelle_admin(filename) + "_"
-    if get_pauvres != "":
+    if get_pauvres(filename) != "":
         table_name += "Pauvres"  + "_"
     table_name += get_categorie_donnee(filename)
     return table_name.lower()
