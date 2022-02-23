@@ -30,6 +30,11 @@ def get_categorie_donnee(filename):
     if filename.find("ENSEMBLE") != -1:
         return "ENSEMBLE"
     categorie_pattern = re.compile(r'(.*)_(\d)_(.*)')
+    categorie_pattern_trdeciles_10 = re.compile(r'(.*)_(\d\d)_(.*)') # if not present TRDECILES_10 doesn't get detected
+    if len(categorie_pattern_trdeciles_10.split(filename)) >=3:
+        categorie = categorie_pattern_trdeciles_10.split(filename)[1]
+        categorie_number = categorie_pattern_trdeciles_10.split(filename)[2]
+        return categorie + "_" + categorie_number
     if len(categorie_pattern.split(filename)) >= 3:
         categorie = categorie_pattern.split(filename)[1]
         categorie_number = categorie_pattern.split(filename)[2]
