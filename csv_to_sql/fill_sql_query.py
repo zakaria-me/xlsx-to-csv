@@ -47,7 +47,7 @@ def get_categorie_donnee(filename):
     return ""
 
 def get_year(filename):
-    year_pattern = re.compile(r'.*(\d\d\d\d).*')
+    year_pattern = re.compile(r'.*FILO(\d\d\d\d).*')
     return year_pattern.split(filename)[1]
 
 # in FILOSOFI, from 2012 to 2015 geo_year = data_year + 1
