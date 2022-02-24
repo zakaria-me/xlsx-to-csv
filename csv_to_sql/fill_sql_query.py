@@ -19,6 +19,8 @@ def get_echelle_admin(filename):
         return "DEP"
     if filename.find("EPCI") != -1:
         return "EPCI"
+    if filename.find("EPT") != -1:
+        return "EPT"
     if filename.find("METROPOLE") != -1:
         return "METROPOLE"
     if filename.find("REG") != -1:
