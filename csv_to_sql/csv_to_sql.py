@@ -3,6 +3,7 @@ from textwrap import fill
 import get_directory.destination_directories as dest_dir
 import csv_to_sql.fill_sql_query as fill_sql_query
 import csv, ast
+from console import console
 
 def replace_codgeo_variable_type(path_to_sql_file :str):
   sql_file_read = open(path_to_sql_file, mode="r")
@@ -133,8 +134,8 @@ def csv_to_sql(csv_files_name :list, directory :str):
     if not os.path.exists(path_to_sql_file):
       path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), file)
       sql_file = open(path_to_sql_file, mode="a")
-      print("Ecriture de " + sql_file_name_to_create + " en cours")
+      console.print("Ecriture de " + sql_file_name_to_create + " en cours")
       analyze_csv(path_to_csv_file, sql_file_name_to_create, sql_file)
       sql_file.close()
       edit_sql_file(path_to_sql_file, sql_file_name_to_create, path_to_csv_file)
-      print("Ecriture de " + sql_file_name_to_create + " terminée")
+      console.print("\tEcriture de " + sql_file_name_to_create + " terminée")

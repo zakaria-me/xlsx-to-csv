@@ -1,31 +1,36 @@
-
+from console import *
 import os
 import get_directory.destination_directories as dest_dir
 import CONSTANT
 import sys
 import pandas as pd
+from rich.progress import track
 
 def process_rows(file_name :str):
-  answer = input("A quelle ligne se trouve l'en-tête contenant les noms des colonnes dans " + file_name + " ? ")  
+  answer = console.input(Markdown(f"# A quelle ligne se trouve l'en-tête contenant les noms des colonnes dans {file_name} ?"))  
   if answer.isdigit():
     answer = int(answer) - 1
     return answer
 
 def process_sheet(file_name :str):
-  print("Quelles feuilles de " + file_name + " voulez-vous convertir?\nTaper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée. Appuyer sur seulement sur Entrée si vous voulez convertir toutes les feuilles. Entrez 'q' pour quitter: ")  
+  console.print(Markdown(f"""
+# Quelles feuilles de {file_name} voulez-vous convertir?
+- Taper un numéro(la numérotation des feuilles commencent par 0) ou le nom exact de la feuille puis appuyer sur Entrée.
+- Appuyer seulement sur Entrée si vous voulez convertir toutes les feuilles.
+- Entrez 'q' pour quitter: """))  
   answer = []
   for value in sys.stdin:
     if 'q' == value.rstrip():
       break
     if value == "\n" and len(answer) == 0:
-      print("Vous n'avez pas entré de valeur, toutes les feuilles seront converties.")
+      console.print(Markdown("# Vous n'avez pas entré de valeur, toutes les feuilles seront converties."))
       return CONSTANT.SHEET_NAME
     value = value.strip()
     if value.isdigit():
       value = int(value)
     if value != "":
       answer.append(value)
-  print(answer)
+  console.print(answer)
   return answer
 
 def get_all_csv_files(directory :str, extension :str):
@@ -38,12 +43,12 @@ def get_all_csv_files(directory :str, extension :str):
 
 
 def process_file_bool(file_name :str):
-  answer = input("Voulez-vous convertir : " + file_name + " ?\n Taper oui pour OUI ou taper non pour NON: ")  
+  answer = console.input(Markdown(f"Voulez-vous convertir : {file_name}? Taper oui pour OUI ou taper non pour NON: "))  
   if answer == "oui":
-    print(file_name + " sera converti.\n")
+    console.print(file_name + " sera converti.\n")
     return True 
   else:
-    print(file_name + " ne sera pas converti.\n")
+    console.print(file_name + " ne sera pas converti.\n")
     return False 
 
 def get_all_xslx_files(directory :str, extension :str):
@@ -66,7 +71,7 @@ def get_all_xslx_files(directory :str, extension :str):
           path_to_xlsx_file = os.path.join(dest_dir.get_xlsx_dir_path(directory), file)
           list_files_name.append(path_to_xlsx_file)
         else:
-          print("Le fichier " + csv_file_name + " existe déjà!\nCe fichier sera donc ignoré et pas converti.\n")
+          console.print(Markdown(f"# Le fichier {csv_file_name} existe déjà! Ce fichier sera donc ignoré et pas converti."))
   return list_files_name
 
 def xlsx_to_csv(directory :str):
@@ -88,9 +93,9 @@ def xlsx_to_csv(directory :str):
       sheet_name = process_sheet(os.path.basename(file))
       skiprows = process_rows(os.path.basename(file))
     # lire le fichier Excel 
-    print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter...")
+    console.print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter...")
     read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
-    print("Conversion de " + os.path.basename(file) + " terminée.")
+    console.print("\tConversion de " + os.path.basename(file) + " terminée.")
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     if type(sheet_name) is not list and sheet_name != None:
@@ -104,7 +109,7 @@ def xlsx_to_csv(directory :str):
         csv_file = file.replace(".xlsx", ".csv")
         path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
         csv_files_name.append(path_to_csv_file)
-        print("Conversion de " + str(sheet) + " en cours. Veuillez patienter...")
+        console.print("Conversion de " + str(sheet) + " en cours. Veuillez patienter...")
         read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
-        print("Conversion de " + str(sheet) + " terminée.")
+        console.print("\tConversion de " + str(sheet) + " terminée.")
   return csv_files_name
