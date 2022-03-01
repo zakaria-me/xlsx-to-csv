@@ -3,6 +3,7 @@ import ask_interactive.get_interactivity as get_inter
 import get_directory.destination_directories as dest_dir
 import xlsx_to_csv.xlsx_to_csv as xlsx_to_csv 
 import csv_to_sql.csv_to_sql as csv_to_sql 
+from console import console
 
 def main():
   # Prendre en mémoire le chemin vers le répertoire courant
@@ -16,6 +17,6 @@ def main():
   # Extraire les requetes sql des fichiers csv
   csv_to_sql.csv_to_sql(xlsx_to_csv.get_all_csv_files(directory, ".csv"), directory)
   # Pour éviter que l'invite de commande se referme directement aprés la fin du script
-  input("L'exécution est terminée. Appuyer sur Entrée pour quitter le programme...")
+  console.input("L'exécution est terminée. Appuyer sur Entrée pour quitter le programme...")
 
 main()
