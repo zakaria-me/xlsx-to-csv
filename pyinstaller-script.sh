@@ -1,0 +1,1 @@
+pyinstaller main.py -F --clean -n ../exec/convertisseur
