@@ -95,10 +95,14 @@ def xlsx_to_csv(directory :str):
     # lire le fichier Excel 
     console.print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter...")
     read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
+    excel_sheet_names = pd.ExcelFile(file).sheet_names
     console.print("\tConversion de " + os.path.basename(file) + " terminée.")
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     if type(sheet_name) is not list and sheet_name != None:
+      this_sheet_name = ""
+      if type(sheet) == int:
+        this_sheet_name = excel_sheet_names[sheet]
       csv_file = file.replace(".xlsx", ".csv")
       path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet_name) + "_" + os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)
@@ -106,8 +110,11 @@ def xlsx_to_csv(directory :str):
       pass
     else:
       for sheet in read_file:
+        this_sheet_name = ""
+        if type(sheet) == int:
+          this_sheet_name = excel_sheet_names[sheet]
         csv_file = file.replace(".xlsx", ".csv")
-        path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet) + "_" + os.path.basename(csv_file))
+        path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(this_sheet_name) + "_" + os.path.basename(csv_file))
         csv_files_name.append(path_to_csv_file)
         console.print("Conversion de " + str(sheet) + " en cours. Veuillez patienter...")
         read_file[sheet].to_csv(path_to_csv_file, index = None, header=True, sep=';')
