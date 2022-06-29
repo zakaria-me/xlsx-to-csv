@@ -100,19 +100,25 @@ def xlsx_to_csv(directory :str):
     # Stocker le nom du futur fichier ".csv"
     # Le convertir en fichier ".csv"
     if type(sheet_name) is not list and sheet_name != None:
+      # pour bien nommer les feuilles csv
       this_sheet_name = ""
       if type(sheet) == int:
         this_sheet_name = excel_sheet_names[sheet]
+      else:
+        this_sheet_name = sheet_name
       csv_file = file.replace(".xlsx", ".csv")
-      path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(sheet_name) + "_" + os.path.basename(csv_file))
+      path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(this_sheet_name) + "_" + os.path.basename(csv_file))
       csv_files_name.append(path_to_csv_file)
       read_file.to_csv(path_to_csv_file, index = None, header=True, sep=';')
       pass
     else:
       for sheet in read_file:
+        # pour bien nommer les feuilles csv
         this_sheet_name = ""
         if type(sheet) == int:
           this_sheet_name = excel_sheet_names[sheet]
+        else:
+          this_sheet_name = sheet
         csv_file = file.replace(".xlsx", ".csv")
         path_to_csv_file = os.path.join(dest_dir.get_csv_dir_path(directory), str(this_sheet_name) + "_" + os.path.basename(csv_file))
         csv_files_name.append(path_to_csv_file)
