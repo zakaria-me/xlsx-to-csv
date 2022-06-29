@@ -1,3 +1,4 @@
+import re
 from console import *
 import os
 import get_directory.destination_directories as dest_dir
@@ -94,7 +95,11 @@ def xlsx_to_csv(directory :str):
       skiprows = process_rows(os.path.basename(file))
     # lire le fichier Excel 
     console.print("Conversion de " + os.path.basename(file) + " en cours. Veuillez patienter...")
-    read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
+    read_file = ""
+    try:
+      read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows)
+    except ValueError:
+      read_file = pd.read_excel (file, sheet_name=sheet_name, skiprows=skiprows, engine='xlrd')
     excel_sheet_names = pd.ExcelFile(file).sheet_names
     console.print("\tConversion de " + os.path.basename(file) + " terminée.")
     # Stocker le nom du futur fichier ".csv"
