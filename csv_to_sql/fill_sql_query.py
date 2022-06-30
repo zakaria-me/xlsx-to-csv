@@ -27,11 +27,13 @@ def get_echelle_admin(filename):
         return "REG"
     if filename.find("COM") != -1:
         return "COM"
+    if filename.find("SUPRA") != -1:
+        return "SUPRA"
     else:
         return "NONE"
 
 def get_pauvres(filename):
-     return "Pauvres" if filename.find("Pauvres") != -1 else ""
+     return "Pauvres" if filename.find("PAUVRES") != -1 else ""
 
 def get_categorie_donnee(filename):
     if filename.find("ENSEMBLE") != -1:
@@ -61,6 +63,7 @@ def get_categorie_donnee(filename):
     return ""
 
 def get_year(filename):
+    filename = filename.upper() # si c'est il y a disp au lieu de DISP dans le nom du fichier
     year_pattern = re.compile(r'.*FILO(\d\d\d\d).*')
     if(len(year_pattern.split(filename)) > 1):
         return year_pattern.split(filename)[1]
@@ -76,9 +79,11 @@ def get_geo_year_filosofi(year):
     return str(year_int)
 
 def get_nom_du_schema(filename):
+    filename = filename.upper() # si c'est il y a disp au lieu de DISP dans le nom du fichier
     return "filosofi_" + get_year(filename)
 
 def get_nom_de_la_table(filename):
+    filename = filename.upper() # si c'est il y a disp au lieu de DISP dans le nom du fichier
     table_name = dec_or_disp(filename) + "_" + get_echelle_admin(filename) + "_"
     if get_pauvres(filename) != "":
         table_name += "Pauvres"  + "_"

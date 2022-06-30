@@ -66,17 +66,17 @@ def edit_sql_file(path_to_sql_file :str, filename :str, path_to_csv_file :str):
   append_update_geography_statement_to_file(path_to_sql_file)
   append_update_code_geography_statement_to_file(path_to_sql_file)
   replace_codgeo_variable_type(path_to_sql_file)
-  if filename.find("FILO") != -1:
+  if filename.upper().find("FILO") != -1:
     # get nom du schema
-    nom_du_schema = fill_sql_query.get_nom_du_schema(filename)
+    nom_du_schema = fill_sql_query.get_nom_du_schema(filename.upper())
     # get nom de la table
-    nom_de_la_table = fill_sql_query.get_nom_de_la_table(filename)
+    nom_de_la_table = fill_sql_query.get_nom_de_la_table(filename.upper())
     # replace
     sql_file_read = open(path_to_sql_file, mode="r")
     data = sql_file_read.read()
     data = data.replace("'nom_du_schema.nom_de_la_table'", nom_du_schema + "." + nom_de_la_table) 
     data = data.replace("chemin_d_acces_au_fichier_csv", path_to_csv_file) 
-    data = data.replace("XXXX", fill_sql_query.get_geo_year_filosofi(fill_sql_query.get_year(filename))) 
+    data = data.replace("XXXX", fill_sql_query.get_geo_year_filosofi(fill_sql_query.get_year(filename.upper()))) 
     sql_file_read.close()
     sql_file_write = open(path_to_sql_file, mode="w")
     sql_file_write.write(data)
