@@ -46,12 +46,28 @@ def get_categorie_donnee(filename):
         categorie = categorie_pattern.split(filename)[1]
         categorie_number = categorie_pattern.split(filename)[2]
         return categorie + "_" + categorie_number
+    # Si la categorie est à la fin, ce n'est pas l'idéal mais je n'avais pas envie
+    # de modifier le nom de tous les fichiers de François...
+    categorie_pattern = re.compile(r'(.*)_(.*)_(\d)')
+    categorie_pattern_trdeciles_10 = re.compile(r'(.*)_(.*)_(\d\d)') # if not present TRDECILES_10 doesn't get detected
+    if len(categorie_pattern_trdeciles_10.split(filename)) >=3:
+        categorie = categorie_pattern_trdeciles_10.split(filename)[2]
+        categorie_number = categorie_pattern_trdeciles_10.split(filename)[3]
+        return categorie + "_" + categorie_number
+    if len(categorie_pattern.split(filename)) >= 3:
+        categorie = categorie_pattern.split(filename)[2]
+        categorie_number = categorie_pattern.split(filename)[3]
+        return categorie + "_" + categorie_number
     return ""
 
 def get_year(filename):
     year_pattern = re.compile(r'.*FILO(\d\d\d\d).*')
     if(len(year_pattern.split(filename)) > 1):
         return year_pattern.split(filename)[1]
+    else:
+        year_pattern = re.compile(r'.*FILO_(\d\d\d\d).*')
+        if(len(year_pattern.split(filename)) > 1):
+            return year_pattern.split(filename)[1]
     return "8888"
 
 # in FILOSOFI, from 2012 to 2015 geo_year = data_year + 1
